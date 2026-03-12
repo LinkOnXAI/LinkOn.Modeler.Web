@@ -58,6 +58,57 @@ npm run dev
 npm run build
 ```
 
+## IIS Deployment
+
+`public/web.config` is included in the build output automatically, so SPA fallback and `.qmf/.qml/.qdg` MIME mappings are ready for IIS.
+`build:iis` uses relative asset paths (`./`) so it works when the IIS app is mounted as a sub-path (for example `/Modeler`).
+
+Detailed step-by-step guide:
+- [Windows IIS Deployment Guide](docs/reference/windows-iis-deployment.md)
+
+1. Build only:
+
+```bash
+npm run build:iis
+```
+
+If you explicitly need absolute `/Modeler` asset paths:
+
+```bash
+npm run build:iis:modeler
+```
+
+2. Build and publish to IIS physical path:
+
+```bash
+npm run publish:iis -- -DestinationPath "C:\inetpub\wwwroot\LinkOn.Modeler.Web"
+```
+
+3. Publish without rebuilding:
+
+```bash
+npm run publish:iis -- -DestinationPath "C:\inetpub\wwwroot\LinkOn.Modeler.Web" -SkipBuild
+```
+
+4. Publish with clean target:
+
+```bash
+npm run publish:iis -- -DestinationPath "C:\inetpub\wwwroot\LinkOn.Modeler.Web" -Clean
+```
+
+5. Publish with IIS root landing page (`index.html`) and `/Mdeler` shortcut:
+
+```bash
+npm run publish:iis -- -DestinationPath "C:\inetpub\wwwroot\Modeler" -IncludeRootIndex -ModelerPath "./Modeler"
+```
+
+This command deploys the web app to `C:\inetpub\wwwroot\Modeler` and also writes a service launcher page to `C:\inetpub\wwwroot\index.html` with a relative shortcut (`./Modeler/`).
+
+Notes:
+
+- Install IIS URL Rewrite module if deep links return `404`.
+- Set IIS site physical path to the publish target path.
+
 ## Utility Script
 
 ```bash
